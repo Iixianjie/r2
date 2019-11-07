@@ -2,12 +2,11 @@ import { isObject, isFunction } from '@lxjx/utils';
 
 import { Model } from '@/types';
 
-export default <T>(model: Model<T>) => {
-  const { namespace, state, reducers, effects } = model;
-
-  if (!namespace) {
-    throw Error(`model.${namespace}: the namespace property is required`);
-  }
+/**
+ * 为指定Model内的reducer和effect打上标记，帮助dispatch时进行识别
+ * */
+export default (model: Model<any>, namespace: string) => {
+  const { state, reducers, effects } = model;
 
   if (reducers) {
     if (!isObject(reducers)) {
@@ -17,11 +16,20 @@ export default <T>(model: Model<T>) => {
     /* 默认注入setState */
     for (let [reducerKey, reducer] of Object.entries(reducers)) {
       if(!isFunction(reducer)) throw Error(`${namespace}.reducers.${reducerKey} must be function`);
-      reducer.signKey = `${namespace}.${reducerKey}`;
+      reducer.signKey = `${namespace}.reducer.${reducerKey}`;
     }
   }
 
   if (effects) {
+    if (!isObject(effects)) {
+      throw Error(`${namespace}.effects must be object`);
+    }
 
+    for (let [reducerKey, reducer] of Object.entries(effects)) {
+      if(!isFunction(reducer)) throw Error(`${effects}.reducers.${reducerKey} must be function`);
+      reducer.signKey = `${namespace}.effects.${reducerKey}`;
+    }
   }
+
+  return state;
 }
