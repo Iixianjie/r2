@@ -1,7 +1,6 @@
 import signModel from '../signModel';
 import { Model, ReducerFn, EffectFn } from '@/types';
 
-
 interface rootState {
   m1: {
     name: string;
@@ -21,12 +20,10 @@ const delay = (ms: number) => {
   })
 };
 
-interface M1 {
-  state: { name: string };
-  reducers: {
-    put: ReducerFn<M1['state']>
-  };
-}
+type M1 = Model<
+  rootState['m1'],
+  'put'
+  >;
 
 const m1: M1 = {
   state: {
@@ -37,7 +34,11 @@ const m1: M1 = {
       return { name: payload };
     },
   },
+  effects: {}
 };
+
+
+
 
 interface M2 {
   state: { id: number; name: string }[];
@@ -49,24 +50,41 @@ interface M2 {
   }
 }
 
-const m2: M2 = {
+type M22 = Model<
+  rootState['m2'],
+
+  | 'add', // 新增一条数据
+
+  | 'getUserInfo' // 获取用户信息
+  | 'setToken' // 设置token
+>;
+
+const m2: M22 = {
   state: [{ id: 1, name: '衣服' }],
   reducers: {
-    add(state, payload) {
-      return [{ id: 1, name: payload }];
-    },
+    add(state) {
+      return state;
+    }
   },
   effects: {
-    getUserInfo: async (payload, { getState, dispatch }) => {
-      console.log('effect start');
+    getUserInfo() {
 
-      const res = await delay(1500);
-
-      console.log('effect end');
-      dispatch(m2.reducers.add, res);
-      return res;
     },
-  },
+    setToken() {
+
+    }
+  }
+  // effects: {
+    // getUserInfo: async (payload, { getState, dispatch }) => {
+    //   console.log('effect start');
+    //
+    //   const res = await delay(1500);
+    //
+    //   console.log('effect end');
+    //   dispatch(m2.reducers.add, res);
+    //   return res;
+    // },
+  // },
 };
 
 export {

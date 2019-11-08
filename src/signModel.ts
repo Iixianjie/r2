@@ -1,11 +1,11 @@
 import { isObject, isFunction } from '@lxjx/utils';
 
-import { Model } from '@/types';
+import { IModel } from '@/types';
 
 /**
- * 为指定Model内的reducer和effect打上标记，帮助dispatch时进行识别
+ * 为指定Model内的reducer和effect添加type，帮助dispatch时进行识别
  * */
-export default (model: Model<any>, namespace: string) => {
+export default (model: IModel<any>, namespace: string) => {
   const { state, reducers, effects } = model;
 
   if (reducers) {
@@ -16,7 +16,7 @@ export default (model: Model<any>, namespace: string) => {
     /* 默认注入setState */
     for (let [reducerKey, reducer] of Object.entries(reducers)) {
       if(!isFunction(reducer)) throw Error(`${namespace}.reducers.${reducerKey} must be function`);
-      reducer.signKey = `${namespace}.reducer.${reducerKey}`;
+      reducer.type = `${namespace}.reducer.${reducerKey}`;
     }
   }
 
@@ -27,7 +27,7 @@ export default (model: Model<any>, namespace: string) => {
 
     for (let [reducerKey, reducer] of Object.entries(effects)) {
       if(!isFunction(reducer)) throw Error(`${effects}.reducers.${reducerKey} must be function`);
-      reducer.signKey = `${namespace}.effects.${reducerKey}`;
+      reducer.type = `${namespace}.effects.${reducerKey}`;
     }
   }
 

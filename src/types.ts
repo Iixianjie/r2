@@ -1,10 +1,20 @@
-import { StoreEnhancer, Dispatch } from 'redux';
+import { StoreEnhancer, Dispatch, MiddlewareAPI, AnyAction } from 'redux';
 
-declare module 'redux' {
-  interface Dispatch {
-    (arg: ReducerFn<any>, payload?: any): void;
-    (arg: EffectFn<any>, payload?: any): Promise<any>;
-  }
+/** dispatch签名扩展 */
+export interface DispatchExt {
+  (arg: ReducerFn<any>, payload?: any): void;
+  (arg: EffectFn<any>, payload?: any): Promise<any>;
+}
+
+/** 扩展中间件类型 */
+export interface Middleware2<
+    DispatchExt = {},
+    S = any,
+    D extends Dispatch = Dispatch
+  > {
+  (api: MiddlewareAPI<D, S>): (
+    next: Dispatch<AnyAction>
+  ) => (action: any, payload?: any) => any
 }
 
 /**
@@ -13,22 +23,22 @@ declare module 'redux' {
  * */
 export interface ReducerFn<T> {
   (state: T, payload: any): T;
-  signKey?: string;
+  type?: string;
 }
 
 /**
  * model.effects.[fn] 的类型
  * */
 export interface EffectFn<S> {
-  (payload: any, extra: { dispatch: Dispatch, getState: S }): any;
-  signKey?: string;
+  (payload: any, extra: { dispatch: Dispatch, getState: () => S }): any;
+  type?: string;
 }
 
 /**
  * model接口
  * <T>: 该model的State
  * */
-export interface Model<T> {
+export interface IModel<T> {
   state?: T;
   reducers?: {
     [key: string]: ReducerFn<T>;
@@ -39,14 +49,29 @@ export interface Model<T> {
 }
 
 /**
+ * 用户定义的model接口
+ * <S>: 当前model的state
+ * <R>: reducers中包含的所有键组成的联合类型
+ * <E>: effects中包含的所有键组成的联合类型
+ * */
+export interface Model<S, R extends string = any, E extends string = any> {
+  state?: S;
+  reducers: {
+    [key in R]: ReducerFn<S>;
+  }
+  effects: {
+    [key in E]: EffectFn<S>;
+  }
+}
+
+/**
  * createStoreEnhance的配置项
  * <S>: 描述整个state树的接口
  * */
 export interface CreateStoreEnhanceOptions<S> {
   models: {
-    [namespace: string]: Model<any>;
+    [namespace: string]: IModel<any>;
   };
   initState?: S;
-  enhancer?: StoreEnhancer;
+  enhancer?: StoreEnhancer<any, any>;
 }
-
