@@ -1,36 +1,52 @@
-import { StoreEnhancer } from 'redux';
+import { StoreEnhancer, Dispatch } from 'redux';
 
+declare module 'redux' {
+  interface Dispatch {
+    (arg: ReducerFn<any>, payload?: any): void;
+    (arg: EffectFn<any>, payload?: any): Promise<any>;
+  }
+}
 
-interface Reducer<T> {
+/**
+ * model.reducer.[fn] 的类型
+ * <T>: 该model的State
+ * */
+export interface ReducerFn<T> {
   (state: T, payload: any): T;
   signKey?: string;
 }
 
-interface Effect {
-  (payload: any, extra: { dispatch: any, getState: any }): any;
+/**
+ * model.effects.[fn] 的类型
+ * */
+export interface EffectFn<S> {
+  (payload: any, extra: { dispatch: Dispatch, getState: S }): any;
   signKey?: string;
 }
 
 /**
- * <T>: 该模块的state
+ * model接口
+ * <T>: 该model的State
  * */
 export interface Model<T> {
   state?: T;
   reducers?: {
-    [key: string]: Reducer<T>;
+    [key: string]: ReducerFn<T>;
   }
   effects?: {
-    [key: string]: Effect;
+    [key: string]: EffectFn<T>;
   }
 }
 
 /**
- * <S>: 整个state树的类型
+ * createStoreEnhance的配置项
+ * <S>: 描述整个state树的接口
  * */
-export interface CreateStoreOptions<S> {
+export interface CreateStoreEnhanceOptions<S> {
   models: {
     [namespace: string]: Model<any>;
   };
   initState?: S;
   enhancer?: StoreEnhancer;
 }
+

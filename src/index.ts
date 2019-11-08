@@ -1,55 +1,18 @@
 import modelsFormat from './modelsFormat';
-import { createStore, compose, applyMiddleware, Store, Dispatch, Middleware } from 'redux';
+import {
+  createStore, compose, applyMiddleware,
+  Store, Dispatch, Middleware, AnyAction, // 类型
+} from 'redux';
+import coreMiddleware from './coreMiddleware';
+
 import { m1, m2, rootState } from './demo/test';
 
-import { CreateStoreOptions, Model } from './types';
-
-const coreMiddleware = (store: Store) => (next: Dispatch) => (action: any, payload: any) => {
-  const singKey = action.signKey;
-  /* 普通action */
-  if (!singKey) {
-    next(action);
-    return;
-  }
-
-  const [namespace, patchType] = singKey.split('.');
-  const state = store.getState();
-  const modelState = state[namespace];
-
-  /* 函数reducer */
-  if (patchType === 'reducer') {
-    next({
-      type: singKey,
-      __localState: { [namespace]: action(modelState, payload) },
-      __fnReducer: true, // 标记为函数reducer
-    });
-    return;
-  }
-
-  if (patchType === 'effects') {
-
-    // if (action.then) {
-      try {
-        // 为action的开始和结束派发一个空的action，便于回滚和调试
-        next({ type: `@@START ${singKey}` });
-        return action(payload, {
-          dispatch: store.dispatch,
-          getState: store.getState,
-        });
-      } finally {
-        next({ type: `@@END ${singKey}` });
-      }
-    // }
-    return;
-  }
-
-  next(action);
-};
+import { CreateStoreEnhanceOptions, Model, ReducerFn, EffectFn } from './types';
 
 /**
  * <S>: 整个state树的类型
  * */
-const createStoreEnhance = <S>({ models, initState, enhancer }: CreateStoreOptions<S>) => {
+const createStoreEnhance = <S>({ models, initState, enhancer }: CreateStoreEnhanceOptions<S>) => {
   const state: S = modelsFormat(models);
 
   function AppReducer(AppState: S = state, { type, ...payload }: any) {
@@ -61,11 +24,28 @@ const createStoreEnhance = <S>({ models, initState, enhancer }: CreateStoreOptio
     return AppState;
   }
 
-  const enhances = compose(
-    applyMiddleware(coreMiddleware as any),
-  );
+  /* ======== 在包含devtool的环境开启devtool支持 ======== */
+  let composeEnhancers = compose;
+  let enhances = null;
 
-  return createStore(AppReducer, initState, enhances);
+  if (
+    process.env.NODE_ENV === 'development' &&
+    window &&
+    // @ts-ignore
+    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+  ) {
+    // @ts-ignore
+    composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__;
+  }
+  const enhanceSpread = [applyMiddleware(coreMiddleware as any)];
+
+  if (enhancer) {
+    enhanceSpread.push(enhancer as any);
+  }
+
+  enhances = composeEnhancers(...enhanceSpread);
+
+  return createStore(AppReducer, initState, enhances as any);
 };
 
 const store = createStoreEnhance<rootState>({
@@ -73,13 +53,19 @@ const store = createStoreEnhance<rootState>({
     m1,
     m2,
   },
+  initState: {
+    m1: { name: '213' },
+    m2: [{ name: '123213', id: 123213 }]
+  }
 });
 
 // @ts-ignore
-console.log(window._state = store, window._m1 = m1, window._m2 = m2);
+window._store = store;window._m1 = m1;window._m2 = m2;
 
 store.subscribe(() => {
-  console.log('state', store.getState());
+  const state1 = store.getState();
+  // store.dispatch(m2.effects.getUserInfo);
+  console.log('state', state1);
 });
 
 export default createStoreEnhance;

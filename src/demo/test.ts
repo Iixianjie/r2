@@ -1,5 +1,5 @@
 import signModel from '../signModel';
-import { Model } from '@/types';
+import { Model, ReducerFn, EffectFn } from '@/types';
 
 
 interface rootState {
@@ -21,7 +21,14 @@ const delay = (ms: number) => {
   })
 };
 
-const m1: Model<rootState['m1']> = {
+interface M1 {
+  state: { name: string };
+  reducers: {
+    put: ReducerFn<M1['state']>
+  };
+}
+
+const m1: M1 = {
   state: {
     name: 'lxj',
   },
@@ -32,27 +39,31 @@ const m1: Model<rootState['m1']> = {
   },
 };
 
-const m2: Model<rootState['m2']> = {
+interface M2 {
+  state: { id: number; name: string }[];
+  reducers: {
+    add: ReducerFn<M2['state']>
+  };
+  effects: {
+    getUserInfo: EffectFn<M2['state']>;
+  }
+}
+
+const m2: M2 = {
   state: [{ id: 1, name: '衣服' }],
   reducers: {
-    // 'delete' (state) {
-    //   return state;
-    // },
     add(state, payload) {
-      console.log(12312);
       return [{ id: 1, name: payload }];
     },
   },
   effects: {
-    async getUserInfo(payload, { getState, dispatch }) {
-      console.log(1);
-      console.log(2);
+    getUserInfo: async (payload, { getState, dispatch }) => {
+      console.log('effect start');
 
       const res = await delay(1500);
 
-      console.log(3);
-      console.log(4);
-      dispatch(m2!.reducers!.add, res);
+      console.log('effect end');
+      dispatch(m2.reducers.add, res);
       return res;
     },
   },
