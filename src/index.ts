@@ -6,6 +6,7 @@ import {
 import modelsFormat from './common/modelsFormat';
 import coreMiddleware from './middleware/coreMiddleware';
 import coreEnhance from './enhancer/coreEnhance';
+import reduxCacheFactory from './enhancer/reduxCache';
 
 import { CreateStoreEnhanceOptions, DispatchExt } from './types';
 
@@ -38,7 +39,7 @@ const createStoreEnhance = <S>({ models, initState, enhancer }: CreateStoreEnhan
   /* 添加内置的enhancer */
   const enhanceSpread = [
     applyMiddleware<DispatchExt, S>(coreMiddleware),
-    coreEnhance
+    coreEnhance,
   ];
 
   if (enhancer) {
@@ -75,4 +76,9 @@ const createStoreEnhance = <S>({ models, initState, enhancer }: CreateStoreEnhan
 //   console.log('state', state1);
 // });
 
+// export * from './reduxExt';
+export * from './types';
+export {
+  reduxCacheFactory,
+};
 export default createStoreEnhance;
