@@ -1,4 +1,4 @@
-import { AnyAction, Dispatch, MiddlewareAPI } from 'redux';
+import 'redux';
 import { EffectFn, ReducerFn } from '@/types';
 
 declare module 'redux' {
