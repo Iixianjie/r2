@@ -1,132 +1,8 @@
 import { applyMiddleware, createStore, compose } from 'redux';
+import _slicedToArray from '@babel/runtime/helpers/esm/slicedToArray';
 import { isObject, isFunction } from '@lxjx/utils';
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread2(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(source, true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(source).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _objectWithoutPropertiesLoose(source, excluded) {
-  if (source == null) return {};
-  var target = {};
-  var sourceKeys = Object.keys(source);
-  var key, i;
-
-  for (i = 0; i < sourceKeys.length; i++) {
-    key = sourceKeys[i];
-    if (excluded.indexOf(key) >= 0) continue;
-    target[key] = source[key];
-  }
-
-  return target;
-}
-
-function _objectWithoutProperties(source, excluded) {
-  if (source == null) return {};
-
-  var target = _objectWithoutPropertiesLoose(source, excluded);
-
-  var key, i;
-
-  if (Object.getOwnPropertySymbols) {
-    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
-
-    for (i = 0; i < sourceSymbolKeys.length; i++) {
-      key = sourceSymbolKeys[i];
-      if (excluded.indexOf(key) >= 0) continue;
-      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
-      target[key] = source[key];
-    }
-  }
-
-  return target;
-}
-
-function _slicedToArray(arr, i) {
-  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
-}
-
-function _arrayWithHoles(arr) {
-  if (Array.isArray(arr)) return arr;
-}
-
-function _iterableToArrayLimit(arr, i) {
-  if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
-    return;
-  }
-
-  var _arr = [];
-  var _n = true;
-  var _d = false;
-  var _e = undefined;
-
-  try {
-    for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
-      _arr.push(_s.value);
-
-      if (i && _arr.length === i) break;
-    }
-  } catch (err) {
-    _d = true;
-    _e = err;
-  } finally {
-    try {
-      if (!_n && _i["return"] != null) _i["return"]();
-    } finally {
-      if (_d) throw _e;
-    }
-  }
-
-  return _arr;
-}
-
-function _nonIterableRest() {
-  throw new TypeError("Invalid attempt to destructure non-iterable instance");
-}
+import _defineProperty from '@babel/runtime/helpers/esm/defineProperty';
+import _objectWithoutProperties from '@babel/runtime/helpers/esm/objectWithoutProperties';
 
 /**
  * 为指定Model内的reducer和effect添加type，帮助dispatch时进行识别
@@ -255,6 +131,10 @@ var coreMiddleware = function coreMiddleware(store) {
   };
 };
 
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
 var setStateMatch = /setState\/[\w]+$/;
 
 var coreEnhance = function coreEnhance(createStore) {
@@ -268,13 +148,13 @@ var coreEnhance = function coreEnhance(createStore) {
 
 
       if (payload.__fnReducer) {
-        return _objectSpread2({}, rootState, {}, payload.__localState);
+        return _objectSpread({}, rootState, {}, payload.__localState);
       }
       /* action { type: 'replaceRootState' } */
 
 
       if (type === 'replaceRootState') {
-        return _objectSpread2({}, rootState, {}, payload);
+        return _objectSpread({}, rootState, {}, payload);
       }
       /* action { type: 'setState/[namespace]' } */
 
@@ -285,7 +165,7 @@ var coreEnhance = function coreEnhance(createStore) {
             actionType = _type$split2[0],
             namespace = _type$split2[1];
 
-        return _objectSpread2({}, rootState, _defineProperty({}, namespace, _objectSpread2({}, payload)));
+        return _objectSpread({}, rootState, _defineProperty({}, namespace, _objectSpread({}, payload)));
       }
 
       return state;
@@ -294,6 +174,10 @@ var coreEnhance = function coreEnhance(createStore) {
     return createStore(coreReducer, preloadedState);
   };
 };
+
+function ownKeys$1(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread$1(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$1(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$1(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 var reduxCacheFactory = function reduxCacheFactory() {
   var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -305,7 +189,7 @@ var reduxCacheFactory = function reduxCacheFactory() {
     return function (reducer, preloadedState) {
       function cache(state, action) {
         if (action.type === 'R2_CACHE_ROLLBACK') {
-          return _objectSpread2({}, state, {}, action.cacheData);
+          return _objectSpread$1({}, state, {}, action.cacheData);
         }
 
         return reducer(state, action);
