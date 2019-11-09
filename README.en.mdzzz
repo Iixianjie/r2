@@ -401,6 +401,34 @@ dispatch(xx.effects.getUserInfo)
 */
 ```
 
+<br >
+<br >
+
+## Additional enhancers and middleware
+R2 has built-in enhancers and middleware that you can introduce and use when you need them.
+### redux-cache
+```js
+import { reduxCacheFactory } from '@lxjx/r2';
+
+createStoreEnhance<AppState>({
+  models: {
+    user,
+    home,
+  },
+  enhancer: reduxCacheFactory({ includes: ['user'] }), // Also available for regular createStore
+});
+```
+interface
+```js
+interface ReduxCacheFactory {
+  (options?: {
+    /** Key used to store to sessionStorage */
+    cacheKey?: string;
+    /** When the length of this item is greater than 0, only the key specified in the array is cached */
+    includes?: any[];
+  }): StoreEnhancer;
+}
+```
 
 
 
