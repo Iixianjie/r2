@@ -27,7 +27,8 @@
 
 <!-- /TOC -->
 
-<br>
+<br />
+
 ## Features
 
 * 类似vuex和dva、以model的形式管理reducer和effect，通过分割model来让代码更易组织和维护。
