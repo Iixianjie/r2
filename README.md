@@ -28,7 +28,7 @@
 <!-- /TOC -->
 
 <br>
-## ✨Features
+## Features
 
 * 类似vuex和dva、以model的形式管理reducer和effect，通过分割model来让代码更易组织和维护。
 * 基于Promise/async function的effect处理。
@@ -38,7 +38,7 @@
 
 <br>
 
-## 🆚 string action 与 function action
+## string action 与 function action
 
 首先，我们来回顾一下vuex类似的库和原始redux的状态管理中，状态的声明以及更改过程。
 
@@ -165,7 +165,7 @@ dispatch(count.reducers.getCount);
 
 <br>
 
-## 📦Installation
+## Installation
 
 ```
 npm install @lxjx/r2
@@ -177,7 +177,7 @@ yarn add @lxjx/r2
 
 <br>
 
-##  📺guide
+##  guide
 
 **1. 创建model**  
 
@@ -282,7 +282,7 @@ import store from './store.js'
 
 <br>
 
-## 📙API
+## API
 
 ### createStoreEnhance
 
@@ -315,7 +315,7 @@ export interface CreateStoreEnhanceOptions<S> {
 
 <br>
 
-## 🌹其他
+## 其他
 
 ### 替换整个state
 
