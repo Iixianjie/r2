@@ -1,6 +1,6 @@
 {
   "name": "@lxjx/r2",
-  "version": "1.0.5",
+  "version": "1.0.10",
   "description": "ccc",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
