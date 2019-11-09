@@ -9,7 +9,25 @@
 <p align="center">中文 | <a href="./README.en.md">English</a></p>
 
 <br>
+<!-- TOC -->
 
+- [✨Features](#✨features)
+- [🆚 string action 与 function action](#🆚-string-action-与-function-action)
+- [📦Installation](#📦installation)
+- [📺guide](#📺guide)
+- [📙API](#📙api)
+  - [createStoreEnhance](#createstoreenhance)
+- [🌹其他](#🌹其他)
+  - [替换整个state](#替换整个state)
+  - [setState](#setstate)
+  - [devtool](#devtool)
+  - [连锁effect](#连锁effect)
+- [额外的增强器和中间件](#额外的增强器和中间件)
+  - [redux-cache](#redux-cache)
+
+<!-- /TOC -->
+
+<br>
 ## ✨Features
 
 * 类似vuex和dva、以model的形式管理reducer和effect，通过分割model来让代码更易组织和维护。
@@ -395,10 +413,34 @@ dispatch(xx.effects.getUserInfo)
 */
 ```
 
+<br >
+<br >
 
+## 额外的增强器和中间件
+r2内置了一些常用的增强器和中间件，你可以在需要的时候引入它们并使用。
+### redux-cache
+```js
+import { reduxCacheFactory } from '@lxjx/r2';
 
-
-
+createStoreEnhance<AppState>({
+  models: {
+    user,
+    home,
+  },
+  enhancer: reduxCacheFactory({ includes: ['user'] }), // 也可用于常规的createStore
+});
+```
+interface
+```js
+interface ReduxCacheFactory {
+  (options?: {
+    /** 用于存储到sessionStorage的key */
+    cacheKey?: string;
+    /** 当此项长度大于0时，只会缓存该数组内指定的key */
+    includes?: any[];
+  }): StoreEnhancer;
+}
+```
 
 
 
