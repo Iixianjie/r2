@@ -69,9 +69,12 @@ export interface Model<S, R extends string = any, E extends string = any> {
  * <S>: 描述整个state树的接口
  * */
 export interface CreateStoreEnhanceOptions<S> {
+  /** IModel接口实现组成的map对象 */
   models: {
     [namespace: string]: IModel<any>;
   };
+  /** 初始状态，默认会使用model中声明的state作为该model的初始state，也可以在注册store时通过这个属性注册整个state树(优先级高于model.state, 一旦声明，必须保证声明的state覆盖到每一个model) */
   initState?: S;
+  /** 与redux -> createStore()的enhancer相同 */
   enhancer?: StoreEnhancer<any, any>;
 }

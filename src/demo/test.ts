@@ -1,4 +1,3 @@
-import signModel from '../signModel';
 import { Model, ReducerFn, EffectFn } from '@/types';
 
 interface rootState {
@@ -56,7 +55,7 @@ type M22 = Model<
   | 'add', // 新增一条数据
 
   | 'getUserInfo' // 获取用户信息
-  | 'setToken' // 设置token
+  | 'getUserInfo2' // 获取用户信息
 >;
 
 const m2: M22 = {
@@ -67,12 +66,31 @@ const m2: M22 = {
     }
   },
   effects: {
-    getUserInfo() {
+    async getUserInfo(action, { dispatch }) {
+      console.log(1);
 
+      await delay(1000);
+
+      console.log(2);
+
+      dispatch(m1.reducers.put, 'effect set');
+
+      console.log(3);
+
+      await delay(1000);
+
+      console.log(4);
+
+      await dispatch(m2.effects.getUserInfo2);
+
+      console.log(6);
+
+      return 7;
     },
-    setToken() {
-
-    }
+    async getUserInfo2() {
+      await delay(1000);
+      console.log(5);
+    },
   }
   // effects: {
     // getUserInfo: async (payload, { getState, dispatch }) => {

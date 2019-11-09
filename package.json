@@ -1,6 +1,6 @@
 {
-  "name": "redux-reduce",
-  "version": "0.0.1",
+  "name": "@lxjx/r2",
+  "version": "1.0.0",
   "description": "ccc",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -8,20 +8,22 @@
     "name": "lixianjie",
     "email": "1073830130@qq.com"
   },
-  "repository": "https://github.com/Iixianjie/redux-reduce/redux-reduce",
+  "repository": "https://github.com/Iixianjie/r2",
   "scripts": {
     "dev": "father doc dev",
     "build": "father build"
   },
   "peerDependencies": {
-    "react": "16.x"
+    "@lxjx/utils": "*",
+    "redux": "*"
   },
   "devDependencies": {
     "@lxjx/utils": "^1.0.9",
     "father": "^2.16.0",
-    "redux": "^4.0.4",
     "typescript": "^3.3.3"
   },
-  "license": "MIT",
-  "dependencies": {}
+  "dependencies": {
+    "redux": "^4.0.4"
+  },
+  "license": "MIT"
 }

@@ -1,7 +1,7 @@
 import {
   Dispatch, Store, Middleware
 } from 'redux';
-import { DispatchExt, Middleware2 } from './types';
+import { DispatchExt, Middleware2 } from '../types';
 
 /**
  * 此中间件帮助store.dispatch识别dispatch(reducerFn, action)以及dispatch(async effectFn, action)
@@ -40,11 +40,12 @@ const coreMiddleware: Middleware2<DispatchExt> = (store) => (next) => (action: a
       getState: store.getState,
     });
 
-    if (pending.finally) {
+    if (pending && pending.finally) {
       pending.finally(() => {
         next({ type: `@@END: ${ type }` });
       });
     } else {
+      next({ type: `@@END: ${ type }` });
       console.warn('effect "@@END event" require Promise.prototype.finally');
     }
     return pending;
