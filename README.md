@@ -11,13 +11,13 @@
 <br>
 <!-- TOC -->
 
-- [✨Features](#✨features)
-- [🆚 string action 与 function action](#🆚-string-action-与-function-action)
-- [📦Installation](#📦installation)
-- [📺guide](#📺guide)
-- [📙API](#📙api)
+- [Features](#features)
+- [string action 与 function action](#string-action-与-function-action)
+- [Installation](#installation)
+- [guide](#guide)
+- [API](#api)
   - [createStoreEnhance](#createstoreenhance)
-- [🌹其他](#🌹其他)
+- [其他](#其他)
   - [替换整个state](#替换整个state)
   - [setState](#setstate)
   - [devtool](#devtool)
