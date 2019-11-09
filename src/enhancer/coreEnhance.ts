@@ -13,7 +13,6 @@ const coreEnhance: StoreEnhancer = (createStore) => (reducer, preloadedState) =>
 
     /* action { type: 'replaceRootState' } */
     if (type === 'replaceRootState') {
-      console.log('replaceRootState', rootState, payload);
       return { ...rootState, ...payload };
     }
 
