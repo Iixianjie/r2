@@ -14,9 +14,7 @@
     "build": "father build"
   },
   "peerDependencies": {
-    "@babel/runtim": "*",
-    "@lxjx/utils": "*",
-    "redux": "*"
+    "redux": ">= 4.0.0"
   },
   "devDependencies": {
     "@lxjx/utils": "^1.0.9",
@@ -25,7 +23,8 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.7.2",
-    "redux": "^4.0.4"
+    "redux": "^4.0.4",
+    "@lxjx/utils": "^1.0.10"
   },
   "license": "MIT"
 }
