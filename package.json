@@ -1,9 +1,10 @@
 {
   "name": "@lxjx/r2",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "ccc",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
+  "typings": "./dist",
   "authors": {
     "name": "lixianjie",
     "email": "1073830130@qq.com"
@@ -23,8 +24,8 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.7.2",
-    "redux": "^4.0.4",
-    "@lxjx/utils": "^1.0.10"
+    "@lxjx/utils": "^1.0.10",
+    "redux": "^4.0.4"
   },
   "license": "MIT"
 }
