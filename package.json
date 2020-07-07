@@ -1,0 +1,52 @@
+{
+  "name": "@lxjx/r2",
+  "description": "r2(redux reduce): Model, async action, ide and typescript friendly, without boilerplate code",
+  "keywords": [
+    "redux",
+    "react"
+  ],
+  "version": "2.0.0",
+  "main": "./umd/index.js",
+  "module": "./esm/index.js",
+  "types": "./dist",
+  "repository": "https://github.com/Iixianjie/r2",
+  "author": {
+    "name": "lxj",
+    "email": "1073830130@qq.com"
+  },
+  "license": "MIT",
+  "files": [
+    "./esm",
+    "./umd"
+  ],
+  "scripts": {
+    "prebuild": "npm run lint && rimraf ./esm ./umd",
+    "build": "npm run build:esm && npm run build:umd",
+    "build:esm": "tsc",
+    "build:umd": "tsc -m UMD --outDir ./umd --declarationDir ./umd",
+    "dev": "parcel ./index.html",
+    "demo:react": "parcel ./demo/react/index.html",
+    "watch": "tsc -w",
+    "lint:script": "eslint ./src --ext .js,.jsx,.ts,.tsx",
+    "lint:prettier": "prettier --check ./src/**/*",
+    "lint": "npm run lint:prettier && npm run lint:script",
+    "fix": "prettier --check ./src/**/* --write && eslint ./src --ext .js,.jsx,.ts,.tsx --fix"
+  },
+  "devDependencies": {
+    "@lxjx/preset-config": "^0.1.0",
+    "@types/react-dom": "^16.9.8",
+    "nodemon": "^2.0.4",
+    "parcel-bundler": "^1.12.4",
+    "react-dom": "^16.13.1",
+    "rimraf": "^3.0.2",
+    "typescript": "^3.9.6"
+  },
+  "dependencies": {
+    "@lxjx/utils": "^1.4.5",
+    "@types/react-redux": "^7.1.9",
+    "react": "^16.13.1",
+    "react-redux": "^7.2.0",
+    "redux": "^4.0.5",
+    "tslib": "^2.0.0"
+  }
+}
