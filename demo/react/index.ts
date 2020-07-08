@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDom from 'react-dom';
 import { coreStore } from '../../src';
+import './test';
 import App from './App';
 
 coreStore.set({

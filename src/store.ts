@@ -2,26 +2,13 @@ import { createStore } from 'redux';
 import {
   modelInitAction,
   modelInitMatch,
-  setStateAction,
-  setStateMatch,
   setRootState,
   setRootStateMatch,
+  setStateAction,
+  setStateMatch,
 } from './actions';
 import shareData from './shareData';
-
-function getDevToolCompose() {
-  if (typeof window === 'undefined' || typeof process === 'undefined') {
-    return;
-  }
-  // @ts-ignore
-  if (process.env.NODE_ENV !== 'development' || !window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) {
-    return;
-  }
-  // @ts-ignore
-  return window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__();
-}
-
-getDevToolCompose();
+import { getDevToolCompose } from './utils';
 
 const store = createStore(
   (state: any = {}, { type, ...action }) => {

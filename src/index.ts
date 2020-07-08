@@ -12,6 +12,8 @@ function create<S extends object = any, Actions extends IActions = any>(
 ): IModelApis<S, Actions> {
   const { state = {}, actions, namespace } = model;
 
+  /* TODO: init */
+
   if (!namespace) {
     throw Error('r2: model.namespace is required!');
   }

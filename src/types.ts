@@ -1,4 +1,4 @@
-import { Unsubscribe } from 'redux';
+import { Store, Unsubscribe } from 'redux';
 
 export interface IGet<S> {
   (): S;
@@ -43,6 +43,43 @@ export interface IModelSchema<S extends object = any, Actions extends IActions =
   namespace: string;
   /** 模块状态 */
   state: S;
+  /** 注册model级的中间件 */
+  middleware?: [];
   /** 模块所有action */
   actions?: Actions;
+}
+
+interface IMiddlewareBonus {
+  /** 在整个中间件执行上下文中共享的对象, 可用于不同中间件共享数据 */
+  ctx: any;
+  /** model的命名空间 */
+  namespace: string;
+  /** 底层redux store对象 */
+  store: Store;
+}
+
+/**
+ * 中间件
+ * */
+export interface IMiddleware {
+  /** 每个model创建时触发，接收initState并以返回值作为初始state */
+  init?(initState: any, bonus: IMiddlewareBonus): any;
+
+  /**
+   * 模块创建后，将api发送到用户之前，所有api会先经过此方法
+   * - 可以将最终api包装修改后返回给用户，从而达到类似api enhancer或中间件的效果
+   * - 可以通过此方法实现除了init()外的所有插件钩子
+   * @example
+   * handler(modelApis) {
+   *   // 可以把这种写法想象成类组件方法继承中的`super.xx(arg)`
+   *   const set = modelApis.set;
+   *   modelApis.set = (state) => {
+   *     // 处理state
+   *     // ...
+   *     // 将处理后的state传递给set()
+   *     set(finalState);
+   *   }
+   * }
+   * */
+  transform?(modelApi: IModelApis<any, any>, bonus: IMiddlewareBonus): any;
 }
