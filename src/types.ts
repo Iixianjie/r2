@@ -72,7 +72,7 @@ export interface IMiddleware {
 
   /**
    * 模块创建后，将api发送到用户之前，所有api会先经过此方法
-   * - 可以将最终api包装(通过monkey patch)修改后返回给用户，从而达到类似api enhancer或中间件的效果
+   * - 可以将最终api包装(通过monkey patch)修改后返回给用户，从而达到类似redux的enhancer或中间件的效果
    * - 可以通过此方法实现除了init()外的所有插件钩子
    * @example
    * transform(modelApis) {

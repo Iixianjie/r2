@@ -298,6 +298,8 @@ const App = () => {
 
 ### `middleware`
 
+R2提供了简单的中间件系统，关于如何编写它，你可以参考内置的`log`中间件[r2/log](https://github.com/Iixianjie/r2/blob/master/src/log.ts)
+
 ```ts
 interface IMiddleware {
   /** 每个model创建时触发，接收initState并以返回值作为初始state */
@@ -305,7 +307,7 @@ interface IMiddleware {
 
   /**
    * 模块创建后，将api发送到用户之前，所有api会先经过此方法
-   * - 可以将最终api包装(通过monkey patch)修改后返回给用户，从而达到类似api enhancer或中间件的效果
+   * - 可以将最终api包装(通过monkey patch)修改后返回给用户，从而达到类似redux的enhancer或中间件的效果
    * - 可以通过此方法实现除了init()外的所有插件钩子
    * @example
    * transform(modelApis) {
