@@ -309,7 +309,7 @@ interface IMiddleware {
    * - 可以通过此方法实现除了init()外的所有插件钩子
    * @example
    * transform(modelApis) {
-   *   // 可以把这种写法想象成类组件方法继承中的`super.xx(arg)`， 也称为monkey patch
+   *   // 可以把这种写法想象成类组件方法继承中的`super.xx(arg)`
    *   const set = modelApis.set;
    *   modelApis.set = (state) => {
    *     // 处理state
