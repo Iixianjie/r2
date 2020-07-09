@@ -9,8 +9,6 @@ export default {
   models: [] as IModelApis<any, any>[],
   /** 全局注册的中间件 */
   middleware: [] as IMiddleware[],
-  /** model级中间件 */
-  scopeMiddleware: {} as { [key: string]: IMiddleware[] },
   /** 是否已创建过model，用于识别init与create的执行顺序 */
   modelCreated: false,
   /** init调用计数, 防止多次调用 */

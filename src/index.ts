@@ -1,4 +1,4 @@
-import { IActions, IModelApis, IModelSchema } from './types';
+import { IActions, IMiddlewareBonus, IModelApis, IModelSchema } from './types';
 import { createGet, createListener, createSet, createSubscribe, createUseModel } from './api';
 
 import { store } from './store';
@@ -15,20 +15,7 @@ function create<S extends object = any, Actions extends IActions = any>(
 
   const { state = {}, actions, namespace, middleware } = model;
 
-  const { initHandles, transformHandles } = middlewareHelper(middleware);
-
-  const middlewareBonus = {
-    ctx: {},
-    namespace,
-    store,
-  };
-
-  const finalState = initHandles.reduce(
-    (prev, handler) => {
-      return handler(prev, middlewareBonus);
-    },
-    { ...state },
-  );
+  const middlewares = middlewareHelper(middleware);
 
   if (!namespace) {
     throw Error(prefix('`model.namespace` is required!'));
@@ -46,8 +33,6 @@ function create<S extends object = any, Actions extends IActions = any>(
 
   createListener(namespace);
 
-  store.dispatch(modelInitAction(namespace, finalState));
-
   const modelApis = {
     get,
     set,
@@ -56,13 +41,35 @@ function create<S extends object = any, Actions extends IActions = any>(
     useModel,
   };
 
-  const converted = transformHandles.reduce((prev, handler) => {
-    return handler(prev, middlewareBonus);
-  }, modelApis);
+  const middlewareBonus: IMiddlewareBonus = {
+    initState: { ...state },
+    isInit: true,
+    apis: modelApis,
+    ctx: {},
+    namespace,
+    store,
+    monkeyHelper: (name, cb) => {
+      const next = middlewareBonus.apis[name];
+      if (!next) return;
+      middlewareBonus.apis[name] = cb(next);
+    },
+  };
 
-  shareData.models[namespace as any] = modelApis;
+  middlewareBonus.initState = middlewares.reduce((prev, handler) => {
+    return handler(prev);
+  }, middlewareBonus.initState);
 
-  return converted;
+  middlewareBonus.isInit = false;
+  // 非初始化中间件需要反转顺序
+  middlewares.reverse();
+
+  middlewares.forEach(handler => handler(middlewareBonus));
+
+  store.dispatch(modelInitAction(namespace, middlewareBonus.initState));
+
+  shareData.models[namespace as any] = middlewareBonus.apis;
+
+  return middlewareBonus.apis;
 }
 
 export { create };

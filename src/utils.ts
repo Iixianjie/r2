@@ -20,31 +20,21 @@ export function getDevToolCompose() {
 export function middlewareHelper(scopeMiddleware = [] as IMiddleware[]) {
   const allM = [...shareData.middleware, ...scopeMiddleware];
 
-  const uniqAllM: IMiddleware[] = [];
+  // 中间件取值顺序取反, 存在重复时优先取后声明的
+  allM.reverse();
 
-  const initHandles: NonNullable<IMiddleware['init']>[] = [];
-  const transformHandles: NonNullable<IMiddleware['transform']>[] = [];
+  const uniqAllM: IMiddleware[] = [];
 
   allM.forEach(item => {
     if (!uniqAllM.includes(item)) {
       uniqAllM.push(item);
-      if (isFunction(item.init)) {
-        initHandles.push(item.init);
-      }
-
-      if (isFunction(item.transform)) {
-        transformHandles.push(item.transform);
-      }
     }
   });
 
-  // 使中间件执行顺序更符合直觉
-  transformHandles.reverse();
+  // 恢复正常顺序
+  uniqAllM.reverse();
 
-  return {
-    initHandles,
-    transformHandles,
-  };
+  return uniqAllM;
 }
 
 export function logText(text: string, namespace = '') {

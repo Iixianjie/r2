@@ -1,7 +1,5 @@
 <h1 align="center" style="color: #61dafb;">r2</h1>
-
 <h1 align="center" style="font-size: 80px;color:#61dafb">🌼</h1> 
-
 
 
 <br>
@@ -9,7 +7,6 @@
 
 
 <p align="center">r2(redux reduce): Model, async effect, ide and typescript friendly, without boilerplate code</p>
-
 
 
 <br>
@@ -165,7 +162,7 @@ export default User;
 
 <br>
 
-### `modelSchema`
+#### modelSchema
 
 一个表示`model`的对象
 
@@ -196,7 +193,7 @@ const userM = create({
 
 <br>
 
-### `model`
+#### model
 
 由`create`函数创建, 一组独立的状态以及一些对状态进行操作的api
 
@@ -231,7 +228,7 @@ interface IModelApis {
 
 <br>
 
-### `coreStore` 
+### `coreStore`
 
 所有`model`都由一个根 `store` 管理，根 `store` 包含一些类似`model`的api
 
@@ -296,41 +293,6 @@ const App = () => {
 
 <br>
 
-### `middleware`
-
-R2提供了简单的中间件系统，关于如何编写它，你可以参考内置的`log`中间件[r2/log](https://github.com/Iixianjie/r2/blob/master/src/log.ts)
-
-```ts
-interface IMiddleware {
-  /** 每个model创建时触发，接收initState并以返回值作为初始state */
-  init?(initState: any, bonus: IMiddlewareBonus): any;
-
-  /**
-   * 模块创建后，将api发送到用户之前，所有api会先经过此方法
-   * - 可以将最终api包装(通过monkey patch)修改后返回给用户，从而达到类似redux的enhancer或中间件的效果
-   * - 可以通过此方法实现除了init()外的所有插件钩子
-   * @example
-   * transform(modelApis) {
-   *   // 可以把这种写法想象成类组件方法继承中的`super.xx(arg)`
-   *   const set = modelApis.set;
-   *   modelApis.set = (state) => {
-   *     // 处理state
-   *     // ...
-   *     // 将处理后的state传递给set()
-   *     set(finalState);
-   *   }
-   *   // 返回修改后的api
-   *   return modelApis;
-   * }
-   * */
-  transform?(modelApi: IModelApis<any, any>, bonus: IMiddlewareBonus): any;
-}
-```
-
-
-
-<br>
-
 ### `shallowEqual`
 
 用于性能优化，`state`变更时对传入值进行浅层对比，如果对比结果相同则跳过组件更新，不过，只要不是同事改变了所有`model`的对象引用，通常很少会用到它。
@@ -354,7 +316,42 @@ function Xxx() {
 
 <br>
 
-### `log`
+### `middleware`
+
+可以通过中间件类增强R2的api，关于如何编写它，你可以参考内置的`log`中间件[r2/log](https://github.com/Iixianjie/r2/blob/master/src/log.ts)或参考以下示例。
+
+```ts
+interface IMiddleware {
+  /** 每个model创建时触发，接收initState并以返回值作为初始state */
+  init?(initState: any, bonus: IMiddlewareBonus): any;
+
+  /**
+   * 模块创建后，将api发送到用户之前，所有api会先经过此方法
+   * - 可以将最终api包装(通过monkey patch)修改后返回给用户，从而达到类似redux的enhancer或middleware的效果
+   * - 可以通过此方法实现除了init()外的所有插件钩子
+   * @example
+   * transform(modelApis) {
+   *   // 可以把这种写法想象成类组件方法继承中的`super.xx(arg)`
+   *   const set = modelApis.set;
+   *   modelApis.set = (state) => {
+   *     // 处理state
+   *     // ...
+   *     // 将处理后的state传递给set()
+   *     set(finalState);
+   *   }
+   *   // 返回修改后的api
+   *   return modelApis;
+   * }
+   * */
+  transform?(modelApi: IModelApis<any, any>, bonus: IMiddlewareBonus): any;
+}
+```
+
+
+
+<br>
+
+#### log
 
 一个内置的中间件，会对你做的几乎任何操作进行log
 

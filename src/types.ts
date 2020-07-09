@@ -54,39 +54,70 @@ export interface IModelSchema<S extends object = any, Actions extends IActions =
   actions?: Actions;
 }
 
+// export interface IMiddlewareBonus {
+//   /** 在整个中间件执行上下文中共享的对象, 可用于不同中间件共享数据 */
+//   ctx: any;
+//   /** model的命名空间 */
+//   namespace: string;
+//   /** 底层redux store对象 */
+//   store: Store;
+// }
+//
+// /**
+//  * 中间件
+//  * */
+// export interface IMiddleware {
+//   /** 每个model创建时触发，接收initState并以返回值作为初始state */
+//   init?(initState: any, bonus: IMiddlewareBonus): any;
+//
+//   /**
+//    * 模块创建后，将api发送到用户之前，所有api会先经过此方法
+//    * - 可以将最终api包装(通过monkey patch)修改后返回给用户，从而达到类似redux的enhancer或中间件的效果
+//    * - 可以通过此方法实现除了init()外的所有插件钩子
+//    * @example
+//    * transform(modelApis) {
+//    *   // 可以把这种写法想象成类组件方法继承中的`super.xx(arg)`
+//    *   const set = modelApis.set;
+//    *   modelApis.set = (state) => {
+//    *     // 处理state
+//    *     // ...
+//    *     // 将处理后的state传递给set()
+//    *     set(finalState);
+//    *   }
+//    *   // 返回修改后的api
+//    *   return modelApis;
+//    * }
+//    * */
+//   transform?(modelApi: IModelApis<any, any>, bonus: IMiddlewareBonus): any;
+// }
+
 export interface IMiddlewareBonus {
+  /** 该model的初始化状态 */
+  initState: any;
+  /** 中间间当前是否为初始化调用
+   * 为true: 执行初始化操作并返回处理后的initState
+   * 为false: 执行中间件具体功能、增强api等, 返回增强后的api
+   * */
+  isInit: boolean;
+  /** 当前model的api */
+  apis: IModelApis<any, any>;
   /** 在整个中间件执行上下文中共享的对象, 可用于不同中间件共享数据 */
   ctx: any;
-  /** model的命名空间 */
+  /** 当前中间件所属model的命名空间 */
   namespace: string;
   /** 底层redux store对象 */
   store: Store;
+  /** 创建monkey patch的帮助函数，用来执行api增强操作 */
+  monkeyHelper: IMonkeyHelper;
 }
 
-/**
- * 中间件
- * */
 export interface IMiddleware {
-  /** 每个model创建时触发，接收initState并以返回值作为初始state */
-  init?(initState: any, bonus: IMiddlewareBonus): any;
+  (bonus: IMiddlewareBonus): any;
+}
 
-  /**
-   * 模块创建后，将api发送到用户之前，所有api会先经过此方法
-   * - 可以将最终api包装(通过monkey patch)修改后返回给用户，从而达到类似redux的enhancer或中间件的效果
-   * - 可以通过此方法实现除了init()外的所有插件钩子
-   * @example
-   * transform(modelApis) {
-   *   // 可以把这种写法想象成类组件方法继承中的`super.xx(arg)`
-   *   const set = modelApis.set;
-   *   modelApis.set = (state) => {
-   *     // 处理state
-   *     // ...
-   *     // 将处理后的state传递给set()
-   *     set(finalState);
-   *   }
-   *   // 返回修改后的api
-   *   return modelApis;
-   * }
-   * */
-  transform?(modelApi: IModelApis<any, any>, bonus: IMiddlewareBonus): any;
+export interface IMonkeyHelper {
+  <Name extends keyof IModelApis<any, any>>(
+    name: Name,
+    cb: (next: IModelApis<any, any>[Name]) => IModelApis<any, any>[Name],
+  ): void;
 }
