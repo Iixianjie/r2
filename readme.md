@@ -430,7 +430,9 @@ create({
 
 #### cache
 
-一个内置的中间件，会对你做的几乎任何操作进行log
+内置中间件, 页面卸载前将state缓存到session中，加载时从session中取出并作为初始状态设置。
+
+💡 此中间件只在浏览器环境可用
 
 ```ts
 import log from '@lxjx/r2/esm/cache';
