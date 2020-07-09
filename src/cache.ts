@@ -1,13 +1,10 @@
-import { isFunction } from '@lxjx/utils';
 import { IMiddleware } from './types';
-import { logText } from './utils';
 
 function getCache(key: string) {
   const sCache = sessionStorage.getItem(key);
   if (sCache) {
-    return JSON.stringify(sCache);
+    return JSON.parse(sCache);
   }
-  return undefined;
 }
 
 function setCache(key: string, state: any) {
@@ -16,32 +13,26 @@ function setCache(key: string, state: any) {
   }
 }
 
-const cache: IMiddleware = {
-  init(initState, { namespace, ctx }) {
-    const hasWindow = typeof window !== 'undefined';
-    const cacheKey = `R2_CACHE_${namespace}`;
+const cache: IMiddleware = ({ isInit, namespace, apis }) => {
+  const hasWindow = typeof window !== 'undefined';
 
-    ctx.__CACHE__ = {
-      hasWindow,
-      cacheKey,
-    };
+  if (!hasWindow) {
+    return;
+  }
 
-    if (!hasWindow) {
-      return initState;
-    }
+  if (isInit) {
+    const cacheKey = `R2_CACHE_${namespace}`.toUpperCase();
+
+    window.addEventListener('beforeunload', () => {
+      setCache(cacheKey, apis.get());
+    });
 
     const sCache = getCache(cacheKey);
 
     if (sCache) {
       return sCache;
     }
-
-    return initState;
-  },
-
-  transform(modelApi, { ctx }): any {
-    return modelApi;
-  },
+  }
 };
 
 export default cache;

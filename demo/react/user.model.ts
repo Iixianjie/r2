@@ -1,8 +1,10 @@
 import { create } from '../../src';
+import log from '../../src/log';
+import cache from '../../src/cache';
 
 const userM = create({
   namespace: 'user',
-  middleware: [],
+  middleware: [log, cache],
   state: {
     name: 'lxj',
     age: 18,

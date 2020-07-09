@@ -1,4 +1,3 @@
-import { isFunction } from '@lxjx/utils';
 import { IMiddleware } from './types';
 import shareData from './shareData';
 

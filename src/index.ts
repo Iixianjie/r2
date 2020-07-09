@@ -55,15 +55,21 @@ function create<S extends object = any, Actions extends IActions = any>(
     },
   };
 
-  middlewareBonus.initState = middlewares.reduce((prev, handler) => {
-    return handler(prev);
-  }, middlewareBonus.initState);
+  middlewares.forEach(handler => {
+    const r = handler(middlewareBonus);
+    if (r !== undefined) {
+      middlewareBonus.initState = r;
+    }
+  });
 
   middlewareBonus.isInit = false;
-  // 非初始化中间件需要反转顺序
+
+  // 非初始化中间件反转顺序
   middlewares.reverse();
 
-  middlewares.forEach(handler => handler(middlewareBonus));
+  middlewares.forEach(handler => {
+    handler(middlewareBonus);
+  });
 
   store.dispatch(modelInitAction(namespace, middlewareBonus.initState));
 

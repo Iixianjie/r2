@@ -54,49 +54,12 @@ export interface IModelSchema<S extends object = any, Actions extends IActions =
   actions?: Actions;
 }
 
-// export interface IMiddlewareBonus {
-//   /** 在整个中间件执行上下文中共享的对象, 可用于不同中间件共享数据 */
-//   ctx: any;
-//   /** model的命名空间 */
-//   namespace: string;
-//   /** 底层redux store对象 */
-//   store: Store;
-// }
-//
-// /**
-//  * 中间件
-//  * */
-// export interface IMiddleware {
-//   /** 每个model创建时触发，接收initState并以返回值作为初始state */
-//   init?(initState: any, bonus: IMiddlewareBonus): any;
-//
-//   /**
-//    * 模块创建后，将api发送到用户之前，所有api会先经过此方法
-//    * - 可以将最终api包装(通过monkey patch)修改后返回给用户，从而达到类似redux的enhancer或中间件的效果
-//    * - 可以通过此方法实现除了init()外的所有插件钩子
-//    * @example
-//    * transform(modelApis) {
-//    *   // 可以把这种写法想象成类组件方法继承中的`super.xx(arg)`
-//    *   const set = modelApis.set;
-//    *   modelApis.set = (state) => {
-//    *     // 处理state
-//    *     // ...
-//    *     // 将处理后的state传递给set()
-//    *     set(finalState);
-//    *   }
-//    *   // 返回修改后的api
-//    *   return modelApis;
-//    * }
-//    * */
-//   transform?(modelApi: IModelApis<any, any>, bonus: IMiddlewareBonus): any;
-// }
-
 export interface IMiddlewareBonus {
   /** 该model的初始化状态 */
   initState: any;
-  /** 中间间当前是否为初始化调用
-   * 为true: 执行初始化操作并返回处理后的initState
-   * 为false: 执行中间件具体功能、增强api等, 返回增强后的api
+  /** 中间件当前是否为初始化调用
+   * 为true: 执行初始化操作
+   * 为false: 执行中间件具体功能、增强api等
    * */
   isInit: boolean;
   /** 当前model的api */
@@ -111,6 +74,15 @@ export interface IMiddlewareBonus {
   monkeyHelper: IMonkeyHelper;
 }
 
+/**
+ * 中间件
+ * 每个中间件会有两个执行阶段：
+ * 1. `model`初始化, `bonus.isInit` 为 `true`，此阶段可以执行一些初始化操作，或者更改model的初始state
+ *    - 如果对参数bonus使用了解构语法如 `{ initState, isInit, ... }`, 需确保其引用地址不变, 即只能`initState.xx = xx`, 不能 `initState = xx`
+ *    - 如果要替换整个`initState`, 可以直接将待替换的状态`return`
+ *    - 未使用结构时，`bonus.initState.xx = xx` 或是 `bonus.initState = xx` 都是可以的
+ * 2. 阶段2，内置api已生成, `bonus.isInit` 为 `false`，此阶段交由中间件开发者对各种api执行增强操作或其他钩子式的行为。
+ * */
 export interface IMiddleware {
   (bonus: IMiddlewareBonus): any;
 }

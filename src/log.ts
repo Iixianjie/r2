@@ -2,58 +2,43 @@ import { isFunction } from '@lxjx/utils';
 import { IMiddleware } from './types';
 import { logText } from './utils';
 
-const log: IMiddleware = {
-  init(initState, { namespace }) {
+const log: IMiddleware = ({ isInit, initState, namespace, apis, monkeyHelper }) => {
+  if (isInit) {
     console.log(logText('model init: ', namespace), initState);
-    return initState;
-  },
+    return;
+  }
 
-  transform(modelApi, { namespace }): any {
-    const monkeyGet = modelApi.get;
+  console.log(logText('contain actions: ', namespace), Object.keys(apis.actions || {}).join(', '));
 
-    console.log(
-      logText('contain actions: ', namespace),
-      Object.keys(modelApi.actions || {}).join(', '),
-    );
+  monkeyHelper('get', next => () => {
+    const s = next();
+    console.log(logText('get(): ', namespace), s);
+    return s;
+  });
 
-    modelApi.get = () => {
-      const s = monkeyGet();
-      console.log(logText('get(): ', namespace), s);
-      return s;
+  monkeyHelper('set', next => patch => {
+    console.log(logText('set(): ', namespace), isFunction(patch) ? 'is patch function' : patch);
+    next(patch);
+  });
+
+  monkeyHelper('useModel', next => (...args) => {
+    const s = next(...args);
+
+    console.log(logText('useModel() mount, state is: ', namespace), s);
+    return s;
+  });
+
+  monkeyHelper('subscribe', next => listener => {
+    console.log(logText('listener is subscribe', namespace));
+
+    const us = next(listener);
+
+    return () => {
+      console.log(logText('listener is unSubscribe', namespace));
+
+      us();
     };
-
-    const monkeySet = modelApi.set;
-
-    modelApi.set = (patch: any) => {
-      console.log(logText('set(): ', namespace), isFunction(patch) ? 'is patch function' : patch);
-      monkeySet(patch);
-    };
-
-    const monkeyUseModel = modelApi.useModel;
-
-    modelApi.useModel = (...args) => {
-      const s = monkeyUseModel(...args);
-
-      console.log(logText('useModel() mount, state is: ', namespace), s);
-      return s;
-    };
-
-    const subscribeModel = modelApi.subscribe;
-
-    modelApi.subscribe = listener => {
-      console.log(logText('listener is subscribe', namespace));
-
-      const us = subscribeModel(listener);
-
-      return () => {
-        console.log(logText('listener is unSubscribe', namespace));
-
-        us();
-      };
-    };
-
-    return modelApi;
-  },
+  });
 };
 
 export default log;
