@@ -17,15 +17,18 @@
 
 <!-- TOC -->
 
-- [**✨Features**](#✨features)
-- [**🔥快速上手**](#🔥快速上手)
-- [**📘API**](#📘api)
+- [✨Features](#✨features)
+- [🔥快速上手](#🔥快速上手)
+- [📘API](#📘api)
   - [`create(modelSchema)`](#createmodelschema)
   - [`modelSchema`](#modelschema)
   - [`model`](#model)
   - [`coreStore`](#corestore)
-- [`shallowEqual`](#shallowequal)
-- [TODO](#todo)
+  - [`init()`](#init)
+  - [`Provider`](#provider)
+  - [`middleware`](#middleware)
+  - [`shallowEqual`](#shallowequal)
+  - [`log`](#log)
 - [💡FQA](#💡fqa)
 
 <!-- /TOC -->
