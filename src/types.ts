@@ -20,6 +20,11 @@ export interface IActions {
   [key: string]: (...arg: any[]) => Promise<any> | void;
 }
 
+export interface IInitOptions {
+  /** 作用于每个model的中间件，先于model级中间件执行 */
+  middleware?: IMiddleware[];
+}
+
 export interface IModelApis<S, Actions> {
   /** 获取当前状态 */
   get: IGet<S>;
@@ -44,12 +49,12 @@ export interface IModelSchema<S extends object = any, Actions extends IActions =
   /** 模块状态 */
   state: S;
   /** 注册model级的中间件 */
-  middleware?: [];
+  middleware?: IMiddleware[];
   /** 模块所有action */
   actions?: Actions;
 }
 
-interface IMiddlewareBonus {
+export interface IMiddlewareBonus {
   /** 在整个中间件执行上下文中共享的对象, 可用于不同中间件共享数据 */
   ctx: any;
   /** model的命名空间 */
@@ -67,11 +72,11 @@ export interface IMiddleware {
 
   /**
    * 模块创建后，将api发送到用户之前，所有api会先经过此方法
-   * - 可以将最终api包装修改后返回给用户，从而达到类似api enhancer或中间件的效果
+   * - 可以将最终api包装(通过monkey patch)修改后返回给用户，从而达到类似api enhancer或中间件的效果
    * - 可以通过此方法实现除了init()外的所有插件钩子
    * @example
-   * handler(modelApis) {
-   *   // 可以把这种写法想象成类组件方法继承中的`super.xx(arg)`
+   * transform(modelApis) {
+   *   // 可以把这种写法想象成类组件方法继承中的`super.xx(arg)`， 也称为monkey patch
    *   const set = modelApis.set;
    *   modelApis.set = (state) => {
    *     // 处理state
@@ -79,6 +84,8 @@ export interface IMiddleware {
    *     // 将处理后的state传递给set()
    *     set(finalState);
    *   }
+   *   // 返回修改后的api
+   *   return modelApis;
    * }
    * */
   transform?(modelApi: IModelApis<any, any>, bonus: IMiddlewareBonus): any;

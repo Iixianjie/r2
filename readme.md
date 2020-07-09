@@ -9,7 +9,6 @@
 <br>
 <br>
 
-
 <!-- TOC -->
 
 - [**✨Features**](#✨features)
@@ -25,12 +24,11 @@
 
 <!-- /TOC -->
 
-
 <br>
 
 <br />
 
-## **✨Features** 
+## ✨Features
 
 * 以`model`的形式组织`state` 。
 * 不写用`reducer` 、`dispatch`🎉, 无样板代码。
@@ -38,6 +36,7 @@
 * 少量api，少量概念。
 * 通过`react hooks` 使用。
 * 可使用`redux devtool`。
+* 更简单易用的中间件系统。
 
 
 
@@ -45,7 +44,7 @@
 
 <br>
 
-## **🔥快速上手**
+## 🔥快速上手
 
 1. 在组件层级的最顶层注册`Provider`
 
@@ -95,7 +94,7 @@ const goodsM = create({
     date: Date.now(),
   },
   actions: {
-    // asunc action
+    // async action
     async getGoods() {
       const list = await delay(1500);
 
@@ -145,7 +144,7 @@ export default User;
 
 <br>
 
-## **📘API**
+## 📘API
 
 ### `create(modelSchema)`
 
@@ -159,7 +158,7 @@ export default User;
 
 ### `modelSchema`
 
-用于创建`model`的对象
+一个表示`model`的对象
 
 ```ts
 const userM = create({
@@ -170,8 +169,10 @@ const userM = create({
     name: 'lxj',
     age: 18,
   },
+  // 注册model级的中间件
+  middleware?: IMiddleware[];
   // 包含一组action函数的对象，action函数可以是同步函数或async函数，当然, 你也可以用它返回Promise。
-  actions: {
+  actions?: {
     setName() {
       userM.set(prev => ({
         name: String(Math.random()),
@@ -234,7 +235,7 @@ coreStore.subscribe
 coreStore.set(patch, replace?: boolean)
 // 获取根状态
 coreStore.get
-// 存放着所有以注册的model
+// 存放着所有已注册的model
 coreStore.models
 ```
 
@@ -242,12 +243,89 @@ coreStore.models
 
 <br>
 
-## `shallowEqual`
+### `init()`
+
+初始化函数, 目前, 在很多时候它都是没用的，除非你需要注册全局中间件, 未来可能会在其中添加更多的选项。
+
+```ts
+import { init } from '@lxjx/r2';
+import cache from '@lxjx/r2/cache';
+import log from '@lxjx/r2/log';
+
+init({
+	middleware: [cache, log],
+})
+```
+
+
+
+⛔ 必须在使用`create()`创建`model`之前执行, 否则会给出警告并静默失败。
+
+
+
+<br>
+
+### `Provider`
+
+使用`react`时必须将此组件注册到组件层级的最顶层。如果传入了`props`并且还未创建过`model`, 会自动调用`init()`并将`props`作为参数传入。
+
+```tsx
+import { Provider } from '@lxjx/r2';
+import log from '@lxjx/r2/log';
+
+const App = () => {
+  return (
+    <Provider middleware={[log]}>
+      <User />
+      <Goods />
+    </Provider>
+  );
+};
+```
+
+
+
+<br>
+
+### `middleware`
+
+```ts
+interface IMiddleware {
+  /** 每个model创建时触发，接收initState并以返回值作为初始state */
+  init?(initState: any, bonus: IMiddlewareBonus): any;
+
+  /**
+   * 模块创建后，将api发送到用户之前，所有api会先经过此方法
+   * - 可以将最终api包装(通过monkey patch)修改后返回给用户，从而达到类似api enhancer或中间件的效果
+   * - 可以通过此方法实现除了init()外的所有插件钩子
+   * @example
+   * transform(modelApis) {
+   *   // 可以把这种写法想象成类组件方法继承中的`super.xx(arg)`， 也称为monkey patch
+   *   const set = modelApis.set;
+   *   modelApis.set = (state) => {
+   *     // 处理state
+   *     // ...
+   *     // 将处理后的state传递给set()
+   *     set(finalState);
+   *   }
+   *   // 返回修改后的api
+   *   return modelApis;
+   * }
+   * */
+  transform?(modelApi: IModelApis<any, any>, bonus: IMiddlewareBonus): any;
+}
+```
+
+
+
+<br>
+
+### `shallowEqual`
 
 用于性能优化，`state`变更时对传入值进行浅层对比，如果对比结果相同则跳过组件更新，不过，只要不是同事改变了所有`model`的对象引用，通常很少会用到它。
 
 ```tsx
-import { shallowEqual } from '@lxjx/r2';
+import shallowEqual from '@lxjx/r2/shallowEqual';
 // ...
 
 function Xxx() {
@@ -262,10 +340,23 @@ function Xxx() {
 如果你需要更精确的对比，可以使用`lodash.isEqual()`或者任意接口一致的函数。
 
 
+
 <br>
 
-## TODO
-- [ ] 中间件api or 插件api
+### `log`
+
+一个内置的中间件，会对你做的几乎任何操作进行log
+
+```ts
+import log from '@lxjx/r2/log';
+
+create({
+	namespace: 'myModel',
+	middleware: [log],
+})
+```
+
+
 
 <br>
 
@@ -310,6 +401,12 @@ userM.actions.getUsers()
     	console.log('完成');
 	});
 ```
+
+
+
+<br>
+
+<br>
 
 
 

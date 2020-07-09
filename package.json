@@ -25,7 +25,6 @@
     "build:esm": "tsc",
     "build:umd": "tsc -m UMD --outDir ./umd --declarationDir ./umd",
     "dev": "parcel ./index.html",
-    "demo:react": "parcel ./demo/react/index.html",
     "watch": "tsc -w",
     "lint:script": "eslint ./src --ext .js,.jsx,.ts,.tsx",
     "lint:prettier": "prettier --check ./src/**/*",

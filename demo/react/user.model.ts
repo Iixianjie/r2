@@ -2,24 +2,24 @@ import { create } from '../../src';
 
 const userM = create({
   namespace: 'user',
+  middleware: [],
   state: {
     name: 'lxj',
     age: 18,
   },
   actions: {
     setName() {
-      userM.set(prev => ({
+      userM.set({
         name: String(Math.random()),
-        age: prev.age - 1,
-      }));
+      });
     },
   },
 });
-//
-// const us = userM.subscribe(state => {
-//   console.log('change', state);
-// });
-//
-// setTimeout(us, 2000);
+
+const us = userM.subscribe(state => {
+  console.log('change', state);
+});
+
+setTimeout(us, 2000);
 
 export default userM;

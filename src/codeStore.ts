@@ -2,7 +2,8 @@ import { AnyObject, isFunction } from '@lxjx/utils';
 import { store } from './store';
 import { setRootState } from './actions';
 import shareData from './shareData';
-import { IListener } from './types';
+import { IInitOptions, IListener } from './types';
+import { prefix } from './utils';
 
 function get<S extends AnyObject = any>(): S {
   return store.getState();
@@ -27,11 +28,28 @@ function subscribe<S = any>(listener: IListener<S>) {
   });
 }
 
+function init({ middleware }: IInitOptions) {
+  if (shareData.initCount >= 1) {
+    console.warn(prefix('`init()` is executed multiple times'));
+    return;
+  }
+  if (shareData.modelCreated) {
+    console.warn(prefix('`init()` must be executed before `create()`'));
+    return;
+  }
+  shareData.initCount++;
+
+  if (middleware && middleware.length) {
+    shareData.middleware.push(...middleware);
+  }
+}
+
 const coreStore = {
   get,
   set,
   subscribe,
   models: shareData.models,
+  init,
 };
 
 export { coreStore };

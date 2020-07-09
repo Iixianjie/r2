@@ -60,7 +60,6 @@ export function createListener(namespace: string) {
       // 通过内存地址是否变更判断
       _state !== _lastState
     ) {
-      // console.log(namespace, 'change', _state);
       shareData.listeners.forEach(listener => {
         listener(_state);
       });

@@ -6,16 +6,32 @@ import shareData from './shareData';
 
 import { modelInitAction } from './actions';
 import actionsHandle from './actionsHandle';
+import { middlewareHelper, prefix } from './utils';
 
 function create<S extends object = any, Actions extends IActions = any>(
   model: IModelSchema<S, Actions>,
 ): IModelApis<S, Actions> {
-  const { state = {}, actions, namespace } = model;
+  shareData.modelCreated = true;
 
-  /* TODO: init */
+  const { state = {}, actions, namespace, middleware } = model;
+
+  const { initHandles, transformHandles } = middlewareHelper(middleware);
+
+  const middlewareBonus = {
+    ctx: {},
+    namespace,
+    store,
+  };
+
+  const finalState = initHandles.reduce(
+    (prev, handler) => {
+      return handler(prev, middlewareBonus);
+    },
+    { ...state },
+  );
 
   if (!namespace) {
-    throw Error('r2: model.namespace is required!');
+    throw Error(prefix('`model.namespace` is required!'));
   }
 
   const get = createGet(namespace);
@@ -30,7 +46,7 @@ function create<S extends object = any, Actions extends IActions = any>(
 
   createListener(namespace);
 
-  store.dispatch(modelInitAction(namespace, state));
+  store.dispatch(modelInitAction(namespace, finalState));
 
   const modelApis = {
     get,
@@ -40,12 +56,15 @@ function create<S extends object = any, Actions extends IActions = any>(
     useModel,
   };
 
+  const converted = transformHandles.reduce((prev, handler) => {
+    return handler(prev, middlewareBonus);
+  }, modelApis);
+
   shareData.models[namespace as any] = modelApis;
 
-  return modelApis;
+  return converted;
 }
 
 export { create };
-export { shallowEqual } from 'react-redux';
 export { coreStore } from './codeStore';
 export * from './Provider';
