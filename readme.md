@@ -4,7 +4,13 @@
 
 
 
-<p align="center">r2(redux reduce): Model, async effect, ide and typescript friendly, without boilerplate code</p>
+<br>
+
+
+
+<p align="center">r2(redux reduce): Model, async effect, ide and typescript friendly, without boilerplate code</p>
+
+
 
 <br>
 <br>
