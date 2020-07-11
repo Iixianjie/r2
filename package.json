@@ -5,7 +5,7 @@
     "redux",
     "react"
   ],
-  "version": "2.1.0",
+  "version": "2.2.0",
   "main": "./umd/index.js",
   "module": "./esm/index.js",
   "types": "./dist",
@@ -23,7 +23,7 @@
     "prebuild": "npm run test && npm run lint && rimraf ./esm ./umd",
     "build": "npm run build:esm && npm run build:umd",
     "build:esm": "tsc",
-    "build:umd": "tsc -m UMD --outDir ./umd --outFile index.js --declarationDir ./umd",
+    "build:umd": "tsc -m UMD --outDir ./umd --declarationDir ./umd",
     "dev": "parcel ./index.html",
     "watch": "tsc -w",
     "lint:script": "eslint ./src --ext .js,.jsx,.ts,.tsx",
