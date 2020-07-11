@@ -6,7 +6,7 @@ import log from '../../src/log';
 
 const App = () => {
   return (
-    <Provider middleware={[log]}>
+    <Provider>
       <div>App</div>
       <User />
       <Goods />

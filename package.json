@@ -20,7 +20,7 @@
     "./umd"
   ],
   "scripts": {
-    "prebuild": "npm run lint && rimraf ./esm ./umd",
+    "prebuild": "npm run test && npm run lint && rimraf ./esm ./umd",
     "build": "npm run build:esm && npm run build:umd",
     "build:esm": "tsc",
     "build:umd": "tsc -m UMD --outDir ./umd --outFile index.js --declarationDir ./umd",

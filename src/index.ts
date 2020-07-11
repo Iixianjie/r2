@@ -1,3 +1,4 @@
+import { isFunction } from '@lxjx/utils';
 import { IActions, IMiddlewareBonus, IModelApis, IModelSchema } from './types';
 import { createGet, createListener, createSet, createSubscribe, createUseModel } from './api';
 
@@ -9,11 +10,15 @@ import actionsHandle from './actionsHandle';
 import { middlewareHelper, prefix } from './utils';
 
 function create<S extends object = any, Actions extends IActions = any>(
-  model: IModelSchema<S, Actions>,
+  model: IModelSchema<S, Actions> | ((apis: IModelApis<S, Actions>) => IModelSchema<S, Actions>),
 ): IModelApis<S, Actions> {
   shareData.modelCreated = true;
 
-  const { state = {}, actions, namespace, middleware } = model;
+  const modelApis: any = {};
+
+  const { state = {}, actions, namespace, middleware } = isFunction(model)
+    ? model(modelApis)
+    : model;
 
   const middlewares = middlewareHelper(middleware);
 
@@ -21,25 +26,19 @@ function create<S extends object = any, Actions extends IActions = any>(
     throw Error(prefix('`model.namespace` is required!'));
   }
 
-  const get = createGet(namespace);
+  modelApis.get = createGet(namespace);
 
-  const set = createSet(namespace, get);
+  modelApis.set = createSet(namespace, modelApis.get);
 
-  const subscribe = createSubscribe(namespace);
+  modelApis.subscribe = createSubscribe(namespace);
 
-  const useModel = createUseModel(namespace);
+  modelApis.useModel = createUseModel(namespace);
+
+  modelApis.actions = actions;
 
   actionsHandle(namespace, actions);
 
   createListener(namespace);
-
-  const modelApis = {
-    get,
-    set,
-    actions: (actions || {}) as Actions,
-    subscribe,
-    useModel,
-  };
 
   const middlewareBonus: IMiddlewareBonus = {
     initState: { ...state },

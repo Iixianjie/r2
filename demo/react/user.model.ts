@@ -2,9 +2,9 @@ import { create } from '../../src';
 import log from '../../src/log';
 import cache from '../../src/cache';
 
-const userM = create({
+const userM = create(api => ({
   namespace: 'user',
-  middleware: [log, cache],
+  // middleware: [log, cache],
   state: {
     name: 'lxj',
     age: 18,
@@ -16,12 +16,12 @@ const userM = create({
       });
     },
   },
-});
+}));
 
-const us = userM.subscribe(state => {
-  console.log('change', state);
-});
-
+// const us = userM.subscribe(state => {
+//   console.log('change', state);
+// });
+//
 // setTimeout(us, 2000);
 
 export default userM;
