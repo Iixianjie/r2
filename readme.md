@@ -437,11 +437,11 @@ create({
 💡 此中间件只在浏览器环境可用
 
 ```ts
-import log from '@lxjx/r2/esm/cache';
+import cache from '@lxjx/r2/esm/cache';
 
 create({
 	namespace: 'myModel',
-	middleware: [log],
+	middleware: [cache],
 })
 ```
 
