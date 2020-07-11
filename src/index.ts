@@ -25,7 +25,7 @@ function create<S extends object = any, Actions extends IActions = any>(
 
   const set = createSet(namespace, get);
 
-  const subscribe = createSubscribe();
+  const subscribe = createSubscribe(namespace);
 
   const useModel = createUseModel(namespace);
 

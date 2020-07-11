@@ -19,16 +19,18 @@ export function createSet<S>(namespace: string, get: IGet<S>) {
   };
 }
 
-export function createSubscribe<S = any>() {
+export function createSubscribe<S = any>(namespace: string) {
   const { listeners } = shareData;
 
+  listeners[namespace] = [];
+
   return function subscribe(listener: IListener<S>) {
-    listeners.push(listener);
+    listeners[namespace].push(listener);
 
     return () => {
-      const ind = listeners.indexOf(listener);
+      const ind = listeners[namespace].indexOf(listener);
       if (ind !== -1) {
-        listeners.splice(ind, 1);
+        listeners[namespace].splice(ind, 1);
       }
     };
   };
@@ -47,9 +49,10 @@ export function createUseModel(namespace: string) {
 export function createListener(namespace: string) {
   store.subscribe(() => {
     const nState = store.getState();
-    const { lastState } = shareData;
+    const { lastState, listeners } = shareData;
 
     if (!lastState) return;
+    if (!listeners[namespace].length) return;
 
     const _state = nState[namespace];
     const _lastState = lastState[namespace];
@@ -60,7 +63,7 @@ export function createListener(namespace: string) {
       // 通过内存地址是否变更判断
       _state !== _lastState
     ) {
-      shareData.listeners.forEach(listener => {
+      listeners[namespace].forEach(listener => {
         listener(_state);
       });
     }
