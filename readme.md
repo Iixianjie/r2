@@ -156,7 +156,7 @@ export default User;
 
 ### `create(modelSchema)`
 
-`const model = create(modelSchema)`
+`const model = create(modelSchema | api => modelSchema)`
 
 创建并返回一个`model`
 

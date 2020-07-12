@@ -1,4 +1,7 @@
-import { create } from '../src';
+import React from 'react';
+import { render, fireEvent } from '@testing-library/react';
+import '@testing-library/jest-dom/extend-expect';
+import { create, Provider } from '../src';
 
 function createModel() {
   const m1 = create({
@@ -118,5 +121,52 @@ describe('modal api', () => {
     expect(listener).toHaveBeenNthCalledWith(3, { name: 'lxj' });
   });
 
-  test.todo('useModel test');
+  test('useModel test', () => {
+    const countM = create({
+      namespace: 'count',
+      state: {
+        num: 0,
+      },
+    });
+
+    const countM2 = create({
+      namespace: 'count2',
+      state: {
+        num: 0,
+      },
+    });
+
+    const Counter: any = jest.fn(() => {
+      const state = countM.useModel();
+
+      return <div onClick={() => countM.set(prev => ({ num: prev.num + 1 }))}>{state.num}</div>;
+    });
+
+    const { container } = render(
+      <Provider>
+        <Counter />
+      </Provider>,
+    );
+
+    const getText = () => (container.firstChild as any).innerHTML;
+
+    const click = () => fireEvent.click(container.firstChild as any);
+
+    expect(getText()).toBe('0');
+
+    click();
+
+    expect(getText()).toBe('1');
+
+    click();
+    click();
+
+    expect(getText()).toBe('3');
+
+    // 测试相邻model更新是否会影响组件更新
+    countM2.set({ num: 10 });
+
+    // 初始化 + 三次更新
+    expect(Counter.mock.calls.length).toBe(4);
+  });
 });
