@@ -258,7 +258,7 @@ coreStore.models
 ```ts
 import { init } from '@lxjx/r2';
 import cache from '@lxjx/r2/cache';
-import log from '@lxjx/r2/esm/log';
+import log from '@lxjx/r2/log';
 
 init({
 	middleware: [cache, log],
@@ -279,7 +279,7 @@ init({
 
 ```tsx
 import { Provider } from '@lxjx/r2';
-import log from '@lxjx/r2/esm/log';
+import log from '@lxjx/r2/log';
 
 const App = () => {
   return (
@@ -300,7 +300,7 @@ const App = () => {
 用于性能优化，`state`变更时对传入值进行浅层对比，如果对比结果相同则跳过组件更新，不过，只要不是同事改变了所有`model`的对象引用，通常很少会用到它。
 
 ```tsx
-import shallowEqual from '@lxjx/r2/esm/shallowEqual';
+import shallowEqual from '@lxjx/r2/shallowEqual';
 // ...
 
 function Xxx() {
@@ -379,7 +379,7 @@ function myMiddleware({
 #### 注册中间件
 
 ```tsx
-import log from '@lxjx/r2/esm/log';
+import log from '@lxjx/r2/log';
 
 // model级注册
 create({
@@ -418,7 +418,7 @@ import { Provider } from '@lxjx/r2';
 一个内置的中间件，会对你做的几乎任何操作进行log
 
 ```ts
-import log from '@lxjx/r2/esm/log';
+import log from '@lxjx/r2/log';
 
 create({
 	namespace: 'myModel',
@@ -437,7 +437,7 @@ create({
 💡 此中间件只在浏览器环境可用
 
 ```ts
-import cache from '@lxjx/r2/esm/cache';
+import cache from '@lxjx/r2/cache';
 
 create({
 	namespace: 'myModel',

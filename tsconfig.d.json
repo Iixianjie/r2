@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "system",  // https://github.com/Microsoft/TypeScript/issues/27117
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outFile": "index.d.ts",
+  }
+}
